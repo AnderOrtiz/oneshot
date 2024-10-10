@@ -1,0 +1,45 @@
+use('oneshot')
+
+db.users.drop()
+
+db.createCollection('users', {
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            required: ['name', 'fotos', 'digital'],
+            properties:{
+                nombre: {
+                    bsonType: 'string'
+                },
+                apellido: {
+                    bsonType: 'string'
+                },
+                telefono: {
+                    bsonType: 'number'
+                },
+                fotos: {
+                    bsonType: "array",
+                    items: {
+                        bsonType: "object",
+                        required: ['fotoId', 'detail'],
+                        properties: {
+                            fotoId: {
+                                bsonType: 'string'
+                            },
+                            detail: {
+                                bsonType: 'string'
+                            }
+                        }
+                    },
+                    description: "Lista de fotos con detalles"
+                },
+                digital: {
+                    enum: [ 'Si', 'No']
+                },
+                total: {
+                    bsonType: 'double',
+                }
+            }
+        }
+    }
+})
