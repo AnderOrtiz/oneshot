@@ -1,13 +1,13 @@
-use('oneshot')
+use('oneshot') 
 
-db.users.drop()
+db.users.drop();
 
 db.createCollection('users', {
     validator: {
         $jsonSchema: {
             bsonType: 'object',
-            required: ['name', 'fotos', 'digital'],
-            properties:{
+            required: ['nombre', 'fotos', 'digital'],
+            properties: {
                 nombre: {
                     bsonType: 'string'
                 },
@@ -18,9 +18,9 @@ db.createCollection('users', {
                     bsonType: 'number'
                 },
                 fotos: {
-                    bsonType: "array",
+                    bsonType: 'array',
                     items: {
-                        bsonType: "object",
+                        bsonType: 'object',
                         required: ['fotoId', 'detail'],
                         properties: {
                             fotoId: {
@@ -34,12 +34,30 @@ db.createCollection('users', {
                     description: "Lista de fotos con detalles"
                 },
                 digital: {
-                    enum: [ 'Si', 'No']
+                    enum: ['Si', 'No']
                 },
                 total: {
-                    bsonType: 'double',
+                    bsonType: ['double', 'int']
                 }
             }
         }
     }
-})
+});
+
+
+
+db.users.insertOne(
+    {
+        "nombre": "Anderson",
+        "apellido": "Ortiz",
+        "telefono": 12344566,
+        "fotos": [
+            {
+                "fotoId": "0001",
+                "detail": "pequena 2 de cada una"
+            }
+        ],
+        "digital": "Si",
+        "total": 12.23  
+    }   
+);

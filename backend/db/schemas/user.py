@@ -6,11 +6,10 @@ def user_schemas(user) -> dict:
     return {"id": str(user["_id"]),
             "name": user["name"],
             "last_name": user["last_name"],
-            "email": user["email"],
-            "gender": user["gender"],
-            "age": user["age"],
-            "car": list(user["car"]),  # Convertir ObjectId a string
-            "password": user["password"],
+            "phone": user["phone"],
+            "foto": user["foto"],
+            "digital": user["digital"],
+            "total": user["total"], 
             }
 
 def users_schemas(users) -> list:

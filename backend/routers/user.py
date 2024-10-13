@@ -26,15 +26,20 @@ async def user(id: str):
 @router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
 async def create_user(user: User):
     user_dict = dict(user)
+
+# Verificar si la clave 'id' está en el diccionario antes de intentar eliminarla
+    if "id" in user_dict:
+        del user_dict["id"]
+
+    user_dict['fotos'] = [foto.dict() for foto in user.fotos]
+
+
     
     # Validar el género
-    valid_genders = ['F', 'M', 'Male', 'Female']
-    if user_dict['gender'] not in valid_genders:
-        raise HTTPException(status_code=400, detail="Invalid gender value")
+    #valid_genders = ['F', 'M', 'Male', 'Female']
+    #if user_dict['gender'] not in valid_genders:
+    #    raise HTTPException(status_code=400, detail="Invalid gender value")
 
-    # Manejar el campo car
-    if user_dict['car'] is None:  # Si car es None, asignar una lista vacía
-        user_dict['car'] = []
 
     # Insertar el usuario en la base de datos
     try:
