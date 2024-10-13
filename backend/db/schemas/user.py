@@ -1,19 +1,18 @@
 from bson import ObjectId
 
 def user_schemas(user) -> dict:
-    if not user:
-        raise ValueError("User is None")
-    return {"id": str(user["_id"]),
-            "name": user["name"],
-            "last_name": user["last_name"],
-            "phone": user["phone"],
-            "foto": user["foto"],
-            "digital": user["digital"],
-            "total": user["total"], 
-            }
+    return {
+        "nombre": user["nombre"],
+        "apellido": user["apellido"],
+        "telefono": user["telefono"],
+        "fotos": user["fotos"],  # Asegúrate de que la estructura de fotos esté bien
+        "digital": user["digital"],
+        "total": user["total"]
+    }
 
 def users_schemas(users) -> list:
     return [user_schemas(user) for user in users]
+
 
 def convert_objectid(data):
     if isinstance(data, list):

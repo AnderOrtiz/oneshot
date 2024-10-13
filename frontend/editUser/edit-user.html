@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuario</title>
+</head>
+<body>
+    <h1>Editar Usuario</h1>
+    <form id="userForm">
+        <input type="hidden" id="userId" name="userId">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label for="last_name">Apellido:</label>
+        <input type="text" id="last_name" name="last_name" required>
+        <br>
+        <label for="phone">Teléfono:</label>
+        <input type="text" id="phone" name="phone" required>
+        <br>
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <script>
+        // Extraer el ID de la URL
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+
+        if (id) {
+            document.getElementById('userId').value = id; // Almacenar el ID en un campo oculto
+            fetch(`http://localhost:8000/user/${id}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Usuario no encontrado');
+                    return response.json();
+                })
+                .then(user => {
+                    // Cargar los datos del usuario en el formulario
+                    document.getElementById('name').value = user.name;
+                    document.getElementById('last_name').value = user.last_name;
+                    document.getElementById('phone').value = user.phone;
+                })
+                .catch(error => console.error('Error:', error));
+        } else {
+            console.error('ID no proporcionado en la URL');
+        }
+
+        // Manejar la sumisión del formulario
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userData = {
+                id: document.getElementById('userId').value,
+                name: document.getElementById('name').value,
+                last_name: document.getElementById('last_name').value,
+                phone: document.getElementById('phone').value
+            };
+
+            fetch(`http://localhost:8000/user/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Error al actualizar el usuario');
+                alert('Usuario actualizado con éxito');
+                window.location.href = '../viewUser/viewUser.html'; // Redirigir después de guardar
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
+z
