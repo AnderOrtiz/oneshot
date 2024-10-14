@@ -9,6 +9,7 @@ class Foto(BaseModel):
     detail: str
 
 class User(BaseModel):
+    id: Optional[str] = None
     nombre: str
     apellido: str
     telefono: int

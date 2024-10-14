@@ -13,17 +13,21 @@ router = APIRouter(
 # Obtener todos los usuarios
 @router.get("/", response_model=list[User])
 async def all_user():
-    return convert_objectid(users_schemas(db_client.users.find()))
+    users = list(db_client.users.find())  # Obtén la lista de usuarios
+    return convert_objectid(users)
 
-@router.get("/user/{id}")
+
+@router.get("/{id}", response_model=User, status_code=status.HTTP_200_OK)
 async def get_user(id: str):
     try:
         user = db_client.users.find_one({"_id": ObjectId(id)})
         if user is None:
-            raise HTTPException(status_code=404, detail="User not found")
-        return user
+            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        return convert_objectid(user)  # Asegúrate de llamar a la función aquí
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
 
 # Crear un nuevo usuario
 @router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
@@ -34,7 +38,7 @@ async def create_user(user: User):
     if "id" in user_dict:
         del user_dict["id"]
 
-    user_dict['fotos'] = [foto.dict() for foto in user.fotos]
+    user_dict['fotos'] = [dict(foto) for foto in user.fotos]
 
     try:
         inserted_id = db_client.users.insert_one(user_dict).inserted_id
@@ -43,16 +47,13 @@ async def create_user(user: User):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creando usuario: {str(e)}")
 
-# Actualizar un usuario
 @router.put("/{id}", response_model=User)
 async def update_user(id: str, user: User):
     user_dict = dict(user)
-
-    # Verificar si la clave 'id' está en el diccionario antes de intentar eliminarla
+    
+    # Asegúrate de que estás eliminando el campo 'id'
     if "id" in user_dict:
         del user_dict["id"]
-
-    user_dict['fotos'] = [foto.dict() for foto in user.fotos]  # Asegurarse de que las fotos estén en formato correcto
 
     try:
         update_result = db_client.users.update_one(
@@ -67,8 +68,24 @@ async def update_user(id: str, user: User):
     updated_user = db_client.users.find_one({"_id": ObjectId(id)})
     if updated_user is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado después de la actualización")
-    
+
     return convert_objectid(updated_user)
+
+
+
+
+
+
+def convert_objectid(users):
+    if isinstance(users, list):
+        return [{**user, "id": str(user["_id"])} for user in users]
+    else:
+        return {**users, "id": str(users["_id"])}  # Para un solo usuario
+
+
+
+
+
 
 # Eliminar un usuario
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)

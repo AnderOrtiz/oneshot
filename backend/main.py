@@ -2,21 +2,27 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import user
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
 
-# Configuración de CORS
+# Configurar CORS
 origins = [
-    "http://localhost:5500",  # Cambia esto al origen de tu frontend
-    "http://127.0.0.1:5500"
+    "http://127.0.0.1:5500",  # Tu frontend
+    "http://localhost:5500",   # Alternativa
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Permitir todos los métodos
-    allow_headers=["*"],  # Permitir todos los encabezados
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+# El resto de tu código
+
 
 app.include_router(user.router)
 

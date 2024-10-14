@@ -1,31 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Editar Usuarios</title>
+    <link rel="stylesheet" href="./styles.css"> <!-- Asegúrate de ajustar la ruta del CSS -->
 </head>
 <body>
-    <h1><a href="../../index.html">Lista de Usuarios</a></h1>
-    <table id="userTable">
+    <h1>Lista de Usuarios</h1>
+    
+    <table id="userTable" border="1">
         <thead>
             <tr>
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>Teléfono</th>
-                <th>Foto</th>
-                <th>Detalle</th>
+                <th>Foto ID</th>
+                <th>Detalle de la Foto</th>
                 <th>Digital</th>
                 <th>Total</th>
-                <th>Acciones</th> <!-- Nueva columna para botones -->
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Los usuarios se insertarán aquí -->
+            <!-- Las filas de usuarios se generarán dinámicamente con JavaScript -->
         </tbody>
     </table>
-    
-    <script src="script.js"></script>
+
+    <script src="./script.js"></script> <!-- Asegúrate de ajustar la ruta del JS -->
 </body>
 </html>

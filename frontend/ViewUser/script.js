@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const apiUrl = 'http://localhost:8000/user/'; // Reemplaza con la URL real de tu API
+    const apiUrl = 'http://localhost:8000/user/'; // URL de tu API
 
     // Función para obtener datos de la API
     function fetchUsers() {
@@ -9,30 +9,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 const tableBody = document.querySelector('#userTable tbody');
                 tableBody.innerHTML = ''; // Limpiar el contenido previo
 
-                data.forEach(user => {
-                    user.fotos.forEach(foto => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${user.nombre}</td>
-                            <td>${user.apellido}</td>
-                            <td>${user.telefono}</td>
-                            <td>${foto.fotoId}</td>
-                            <td>${foto.detail}</td>
-                            <td>${user.digital}</td>
-                            <td>${user.total}</td>
-                            <td>
-                                <button class="edit-btn" data-id="${user._id}">Editar</button>
-                                <button class="delete-btn" data-id="${user._id}">Eliminar</button>
-                            </td>
-                        `;
-                        tableBody.appendChild(row);
+                // Verifica si data es un array
+                if (Array.isArray(data)) {
+                    data.forEach(user => {
+                        // Comprueba si el usuario tiene fotos
+                        if (user.fotos && Array.isArray(user.fotos)) {
+                            user.fotos.forEach(foto => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${user.nombre}</td>
+                                    <td>${user.apellido}</td>
+                                    <td>${user.telefono}</td>
+                                    <td>${foto.fotoId}</td>
+                                    <td>${foto.detail}</td>
+                                    <td>${user.digital}</td>
+                                    <td>${user.total}</td>
+                                    <td>
+                                        <button class="edit-btn" data-id="${user.id}">Editar</button>
+                                        <button class="delete-btn" data-id="${user.id}">Eliminar</button>
+                                    </td>
+                                `;
+                                tableBody.appendChild(row);
+                            });
+                        } else {
+                            console.warn('El usuario no tiene fotos:', user);
+                        }
                     });
-                });
+                } else {
+                    console.warn('La respuesta no es un array:', data);
+                }
 
                 // Agregar eventos a los botones
                 addEventListeners();
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error al obtener usuarios:', error));
     }
 
     // Función para agregar eventos a los botones
@@ -42,19 +52,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         editButtons.forEach(button => {
             button.addEventListener('click', function() {
-                const userId = this.dataset.id;
-                // Lógica para editar el usuario
-                alert(`Editar usuario con ID: ${userId}`);
-                // Aquí puedes redirigir a un formulario de edición o abrir un modal
+                const userId = this.getAttribute('data-id');
+                if (userId) {
+                    // Redirigir a la página de edición
+                    window.location.href = `../editUser/edit-user.html?id=${userId}`;
+                } else {
+                    console.error('ID de usuario no encontrado');
+                }
             });
         });
 
         deleteButtons.forEach(button => {
             button.addEventListener('click', function() {
-                const userId = this.dataset.id;
-                // Lógica para eliminar el usuario
-                if (confirm(`¿Estás seguro de que quieres eliminar el usuario con ID: ${userId}?`)) {
-                    deleteUser(userId);
+                const userId = this.getAttribute('data-id');
+                if (userId) {
+                    if (confirm(`¿Estás seguro de que quieres eliminar el usuario con ID: ${userId}?`)) {
+                        deleteUser(userId);
+                    }
+                } else {
+                    console.error('ID de usuario no encontrado');
                 }
             });
         });
@@ -62,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para eliminar un usuario
     function deleteUser(userId) {
-        fetch(`${apiUrl}${userId}`, { // Asegúrate de que tu API acepte DELETE en esta ruta
+        fetch(`${apiUrl}${userId}`, {
             method: 'DELETE'
         })
         .then(response => {
@@ -73,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Error al eliminar el usuario.');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error al eliminar el usuario:', error));
     }
 
     // Llamar a la función para cargar los usuarios al cargar la página

@@ -1,74 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Usuario</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Asegúrate de tener tu CSS -->
 </head>
 <body>
     <h1>Editar Usuario</h1>
-    <form id="userForm">
-        <input type="hidden" id="userId" name="userId">
+    <form id="editUserForm">
+        <input type="hidden" id="userId" value="">
         <label for="name">Nombre:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
+        <input type="text" id="name" required>
+
         <label for="last_name">Apellido:</label>
-        <input type="text" id="last_name" name="last_name" required>
-        <br>
+        <input type="text" id="last_name" required>
+
         <label for="phone">Teléfono:</label>
-        <input type="text" id="phone" name="phone" required>
-        <br>
-        <button type="submit">Guardar Cambios</button>
+        <input type="number" id="phone" required>
+
+        <label for="digital">Digital:</label>
+        <input type="text" id="digital" required>
+
+        <label for="total">Total:</label>
+        <input type="number" id="total" required>
+
+        <!-- Aquí puedes agregar campos para las fotos si es necesario -->
+
+        <button type="button" onclick="saveChanges()">Guardar Cambios</button>
     </form>
 
     <script>
-        // Extraer el ID de la URL
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get('id');
+        // Función para obtener el ID del usuario de la URL
+        function getUserIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
 
-        if (id) {
-            document.getElementById('userId').value = id; // Almacenar el ID en un campo oculto
-            fetch(`http://localhost:8000/user/${id}`)
+        // Función para cargar los datos del usuario
+        function loadUserData() {
+            const userId = getUserIdFromUrl();
+            console.log('ID del usuario desde la URL:', userId);
+            fetch(`http://localhost:8000/user/${userId}`)
                 .then(response => {
-                    if (!response.ok) throw new Error('Usuario no encontrado');
+                    if (!response.ok) {
+                        throw new Error('Error al obtener el usuario');
+                    }
                     return response.json();
                 })
                 .then(user => {
-                    // Cargar los datos del usuario en el formulario
-                    document.getElementById('name').value = user.name;
-                    document.getElementById('last_name').value = user.last_name;
-                    document.getElementById('phone').value = user.phone;
+                    console.log('Usuario obtenido:', user);
+                    document.querySelector('#userId').value = user.id; // ID del usuario
+                    document.querySelector('#name').value = user.nombre;
+                    document.querySelector('#last_name').value = user.apellido;
+                    document.querySelector('#phone').value = user.telefono;
+                    document.querySelector('#digital').value = user.digital;
+                    document.querySelector('#total').value = user.total;
+                    // Aquí puedes cargar las fotos si es necesario
                 })
-                .catch(error => console.error('Error:', error));
-        } else {
-            console.error('ID no proporcionado en la URL');
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar el usuario: ' + error.message);
+                });
         }
 
-        // Manejar la sumisión del formulario
-        document.getElementById('userForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const userData = {
-                id: document.getElementById('userId').value,
-                name: document.getElementById('name').value,
-                last_name: document.getElementById('last_name').value,
-                phone: document.getElementById('phone').value
+        // Función para guardar los cambios del usuario
+        function saveChanges() {
+            const id = document.querySelector('#userId').value; // Obtén el ID del usuario
+            const user = {
+                nombre: document.querySelector('#name').value,
+                apellido: document.querySelector('#last_name').value,
+                telefono: document.querySelector('#phone').value,
+                digital: document.querySelector('#digital').value,
+                total: parseFloat(document.querySelector('#total').value),
+                fotos: [] // Aquí puedes agregar las fotos si las estás manejando
             };
 
-            fetch(`http://localhost:8000/user/`, {
+            fetch(`http://localhost:8000/user/${id}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify(user)
             })
             .then(response => {
-                if (!response.ok) throw new Error('Error al actualizar el usuario');
-                alert('Usuario actualizado con éxito');
-                window.location.href = '../viewUser/viewUser.html'; // Redirigir después de guardar
+                if (!response.ok) {
+                    throw new Error('Error al actualizar el usuario');
+                }
+                return response.json();
             })
-            .catch(error => console.error('Error:', error));
-        });
+            .then(data => {
+                console.log('Usuario actualizado:', data);
+                // Redirigir a la tabla de ver usuarios
+                window.location.href = 'http://127.0.0.1:5500/frontend/ViewUser/.index.html'; // Cambia esto a la URL correcta
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al actualizar el usuario: ' + error.message);
+            });
+        }
+
+        // Cargar los datos del usuario al cargar la página
+        window.onload = loadUserData;
     </script>
 </body>
 </html>
-z
