@@ -28,7 +28,6 @@ async def get_user(id: str):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-
 # Crear un nuevo usuario
 @router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
 async def create_user(user: User):
@@ -78,19 +77,11 @@ async def update_user(id: str, user: User):
 
     return convert_objectid(updated_user)
 
-
-
-
-
 def convert_objectid(users):
     if isinstance(users, list):
         return [{**user, "id": str(user["_id"])} for user in users]
     else:
         return {**users, "id": str(users["_id"])}  # Para un solo usuario
-
-
-
-
 
 
 # Eliminar un usuario

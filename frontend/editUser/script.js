@@ -94,13 +94,15 @@ function saveChanges(event) {
     })
     .then(data => {
         alert('Usuario actualizado correctamente');
-        // Aquí puedes redirigir o hacer algo después de la actualización
+        // Redirigir a la página de la tabla de usuarios y recargar
+        window.location.href = 'http://127.0.0.1:5500/frontend/ViewUser/index.html'; // Ajusta la ruta si es necesario
     })
     .catch(error => {
         console.error('Error al guardar los cambios:', error);
         alert('Error al guardar los cambios: ' + error.message);
     });
 }
+
 
 
 // Asociar el evento de envío del formulario a la función saveChanges

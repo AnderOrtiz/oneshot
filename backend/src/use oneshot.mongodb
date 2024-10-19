@@ -34,7 +34,7 @@ db.createCollection('users', {
                     description: "Lista de fotos con detalles"
                 },
                 digital: {
-                    enum: ['Si', 'No']
+                    enum: ['Si', 'No', 'si', 'no']
                 },
                 total: {
                     bsonType: ['double', 'int']
@@ -45,19 +45,3 @@ db.createCollection('users', {
 });
 
 
-
-db.users.insertOne(
-    {
-        "nombre": "Anderson",
-        "apellido": "Ortiz",
-        "telefono": 12344566,
-        "fotos": [
-            {
-                "fotoId": "0001",
-                "detail": "pequena 2 de cada una"
-            }
-        ],
-        "digital": "Si",
-        "total": 12.23  
-    }   
-);
