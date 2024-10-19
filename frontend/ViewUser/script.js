@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const apiUrl = 'http://localhost:8000/user/'; // URL de tu API
+    const apiUrl = 'https://oneshot-rjcw.onrender.com/user/'; // URL de tu API
     const searchInput = document.getElementById('searchInput');
 
     // Función para obtener datos de la API

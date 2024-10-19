@@ -7,11 +7,11 @@ console.log("ID del usuario desde la URL:", userId);
 if (!userId) {
     console.error("ID no proporcionado en la URL");
     alert("ID del usuario no encontrado");
-    window.location.href = 'http://127.0.0.1:5500/frontend/ViewUser/index.html'; // Redirigir si no hay ID
+    window.location.href = 'https://anderortiz.github.io/oneshot/frontend/ViewUser/index.html'; // Redirigir si no hay ID
 }
 
 // Obtener el usuario al cargar la página
-fetch(`http://localhost:8000/user/${userId}`)
+fetch(`https://oneshot-rjcw.onrender.com/user/${userId}`)
     .then(response => {
         if (!response.ok) {
             throw new Error('Error al obtener el usuario');
@@ -79,7 +79,7 @@ function saveChanges(event) {
     });
 
     // Hacer la petición PUT para actualizar el usuario
-    fetch(`http://localhost:8000/user/${userId}`, {
+    fetch(`https://oneshot-rjcw.onrender.com/user/${userId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -95,7 +95,7 @@ function saveChanges(event) {
     .then(data => {
         alert('Usuario actualizado correctamente');
         // Redirigir a la página de la tabla de usuarios y recargar
-        window.location.href = 'http://127.0.0.1:5500/frontend/ViewUser/index.html'; // Ajusta la ruta si es necesario
+        window.location.href = 'https://anderortiz.github.io/oneshot/frontend/ViewUser/index.html'; // Ajusta la ruta si es necesario
     })
     .catch(error => {
         console.error('Error al guardar los cambios:', error);

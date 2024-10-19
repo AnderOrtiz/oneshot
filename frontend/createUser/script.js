@@ -38,7 +38,7 @@ document.getElementById('userForm').addEventListener('submit', function(event) {
     };
 
     // URL de tu API
-    const apiUrl = 'http://localhost:8000/user/'; // Reemplaza con la URL real de tu API
+    const apiUrl = 'https://oneshot-rjcw.onrender.com/user/'; // Reemplaza con la URL real de tu API
 
     // Enviar los datos a la API
     fetch(apiUrl, {
