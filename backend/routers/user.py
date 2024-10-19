@@ -47,22 +47,29 @@ async def create_user(user: User):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creando usuario: {str(e)}")
 
+
+
 @router.put("/{id}", response_model=User)
 async def update_user(id: str, user: User):
     user_dict = dict(user)
-    
+
     # Asegúrate de que estás eliminando el campo 'id'
     if "id" in user_dict:
         del user_dict["id"]
 
+    # Convertir 'fotos' a diccionario si es necesario
+    if 'fotos' in user_dict:
+        user_dict['fotos'] = [dict(foto) for foto in user.fotos]
+
     try:
         update_result = db_client.users.update_one(
-            {"_id": ObjectId(id)},
+            {"_id": ObjectId(id)},  # Asegúrate de que el ID es correcto
             {"$set": user_dict}
         )
         if update_result.matched_count == 0:
             raise HTTPException(status_code=404, detail="Usuario no encontrado")
     except Exception as e:
+        print(f"Error actualizando usuario con ID {id}: {e}")
         raise HTTPException(status_code=500, detail=f"Error actualizando usuario: {str(e)}")
 
     updated_user = db_client.users.find_one({"_id": ObjectId(id)})
@@ -70,7 +77,6 @@ async def update_user(id: str, user: User):
         raise HTTPException(status_code=404, detail="Usuario no encontrado después de la actualización")
 
     return convert_objectid(updated_user)
-
 
 
 

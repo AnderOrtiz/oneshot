@@ -30,40 +30,61 @@ fetch(`http://localhost:8000/user/${userId}`)
 
         // Cargar fotos si es necesario
         const fotosContainer = document.querySelector('#fotosContainer');
+        fotosContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar fotos
         user.fotos.forEach(foto => {
-            const fotoDiv = document.createElement('div');
-            fotoDiv.innerHTML = `<input type="text" name="fotoId" placeholder="Foto ID" value="${foto.fotoId}">
-                                 <input type="text" name="detail" placeholder="Detalle" value="${foto.detail}">`;
-            fotosContainer.appendChild(fotoDiv);
+            addPhoto(foto.fotoId, foto.detail);
         });
     })
     .catch(error => console.error('Error al cargar el usuario:', error));
 
+// Función para agregar un nuevo conjunto de campos para fotos
+function addPhoto(fotoId = '', detail = '') {
+    const fotosContainer = document.querySelector('#fotosContainer');
+    const fotoDiv = document.createElement('div');
+    fotoDiv.classList.add('foto-item');
+    fotoDiv.innerHTML = `
+        <input type="text" name="fotoId" placeholder="Foto ID" value="${fotoId}">
+        <input type="text" name="detail" placeholder="Detalle" value="${detail}">
+        <button type="button" onclick="removePhoto(this)">Eliminar</button>
+    `;
+    fotosContainer.appendChild(fotoDiv);
+}
+
+// Función para eliminar una foto en el frontend
+function removePhoto(button) {
+    const fotoDiv = button.parentElement;
+    fotoDiv.remove();
+}
+
 // Función para guardar los cambios
 function saveChanges(event) {
-    event.preventDefault(); // Evitar que el formulario se envíe de forma tradicional
+    event.preventDefault();
 
-    const updatedUser = {
-        id: userId,
+    const userId = document.querySelector('#userId').value; // Obtener el ID del usuario
+    const userData = {
         nombre: document.querySelector('#name').value,
         apellido: document.querySelector('#last_name').value,
-        telefono: parseInt(document.querySelector('#phone').value),
-        fotos: Array.from(document.querySelectorAll('#fotosContainer div')).map(div => ({
-            fotoId: div.querySelector('input[name="fotoId"]').value,
-            detail: div.querySelector('input[name="detail"]').value
-        })),
+        telefono: document.querySelector('#phone').value,
         digital: document.querySelector('#digital').value,
-        total: parseFloat(document.querySelector('#total').value)
+        total: document.querySelector('#total').value,
+        fotos: []  // Inicializar el arreglo de fotos
     };
 
-    console.log('Datos a enviar:', updatedUser); // Log de los datos que se enviarán
+    // Agregar fotos desde el contenedor
+    const fotosContainer = document.querySelector('#fotosContainer');
+    fotosContainer.querySelectorAll('div').forEach(fotoDiv => {
+        const fotoId = fotoDiv.querySelector('input[name="fotoId"]').value;
+        const detalle = fotoDiv.querySelector('input[name="detail"]').value;
+        userData.fotos.push({ fotoId, detail: detalle }); // Agregar cada foto al arreglo
+    });
 
+    // Hacer la petición PUT para actualizar el usuario
     fetch(`http://localhost:8000/user/${userId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(updatedUser)
+        body: JSON.stringify(userData)
     })
     .then(response => {
         if (!response.ok) {
@@ -72,12 +93,15 @@ function saveChanges(event) {
         return response.json();
     })
     .then(data => {
-        console.log('Usuario actualizado:', data);
-        // Redirigir a la tabla de ver usuarios
-        window.location.href = 'http://127.0.0.1:5500/frontend/ViewUser/index.html';
+        alert('Usuario actualizado correctamente');
+        // Aquí puedes redirigir o hacer algo después de la actualización
     })
-    .catch(error => console.error('Error al actualizar el usuario:', error));
+    .catch(error => {
+        console.error('Error al guardar los cambios:', error);
+        alert('Error al guardar los cambios: ' + error.message);
+    });
 }
+
 
 // Asociar el evento de envío del formulario a la función saveChanges
 document.querySelector('form').addEventListener('submit', saveChanges);

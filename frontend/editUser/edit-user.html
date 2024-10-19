@@ -4,104 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Usuario</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Asegúrate de tener tu CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            width: 300px;
+            margin: 0 auto;
+        }
+        input, button {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+        }
+        .foto-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .foto-item input {
+            width: 45%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Editar Usuario</h1>
-    <form id="editUserForm">
-        <input type="hidden" id="userId" value="">
-        <label for="name">Nombre:</label>
-        <input type="text" id="name" required>
 
-        <label for="last_name">Apellido:</label>
-        <input type="text" id="last_name" required>
+<h2>Editar Usuario</h2>
 
-        <label for="phone">Teléfono:</label>
-        <input type="number" id="phone" required>
+<form id="editUserForm">
+    <input type="hidden" id="userId">
 
-        <label for="digital">Digital:</label>
-        <input type="text" id="digital" required>
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" name="name" required>
 
-        <label for="total">Total:</label>
-        <input type="number" id="total" required>
+    <label for="last_name">Apellido:</label>
+    <input type="text" id="last_name" name="last_name" required>
 
-        <!-- Aquí puedes agregar campos para las fotos si es necesario -->
+    <label for="phone">Teléfono:</label>
+    <input type="text" id="phone" name="phone" required>
 
-        <button type="button" onclick="saveChanges()">Guardar Cambios</button>
-    </form>
+    <label for="digital">Digital:</label>
+    <input type="text" id="digital" name="digital" required>
 
-    <script>
-        // Función para obtener el ID del usuario de la URL
-        function getUserIdFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('id');
-        }
+    <label for="total">Total:</label>
+    <input type="number" id="total" name="total" step="0.01" required>
 
-        // Función para cargar los datos del usuario
-        function loadUserData() {
-            const userId = getUserIdFromUrl();
-            console.log('ID del usuario desde la URL:', userId);
-            fetch(`http://localhost:8000/user/${userId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error al obtener el usuario');
-                    }
-                    return response.json();
-                })
-                .then(user => {
-                    console.log('Usuario obtenido:', user);
-                    document.querySelector('#userId').value = user.id; // ID del usuario
-                    document.querySelector('#name').value = user.nombre;
-                    document.querySelector('#last_name').value = user.apellido;
-                    document.querySelector('#phone').value = user.telefono;
-                    document.querySelector('#digital').value = user.digital;
-                    document.querySelector('#total').value = user.total;
-                    // Aquí puedes cargar las fotos si es necesario
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error al cargar el usuario: ' + error.message);
-                });
-        }
+    <h3>Fotos</h3>
+    <div id="fotosContainer"></div>
 
-        // Función para guardar los cambios del usuario
-        function saveChanges() {
-            const id = document.querySelector('#userId').value; // Obtén el ID del usuario
-            const user = {
-                nombre: document.querySelector('#name').value,
-                apellido: document.querySelector('#last_name').value,
-                telefono: document.querySelector('#phone').value,
-                digital: document.querySelector('#digital').value,
-                total: parseFloat(document.querySelector('#total').value),
-                fotos: [] // Aquí puedes agregar las fotos si las estás manejando
-            };
+    <button type="button" onclick="addPhoto()">Agregar Foto</button>
 
-            fetch(`http://localhost:8000/user/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al actualizar el usuario');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Usuario actualizado:', data);
-                // Redirigir a la tabla de ver usuarios
-                window.location.href = 'http://127.0.0.1:5500/frontend/ViewUser/.index.html'; // Cambia esto a la URL correcta
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al actualizar el usuario: ' + error.message);
-            });
-        }
+    <button type="submit">Guardar Cambios</button>
+</form>
 
-        // Cargar los datos del usuario al cargar la página
-        window.onload = loadUserData;
-    </script>
+<script src="script.js">
+    
+</script>
+
 </body>
 </html>

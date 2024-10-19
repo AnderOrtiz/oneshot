@@ -12,28 +12,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Verifica si data es un array
                 if (Array.isArray(data)) {
                     data.forEach(user => {
-                        // Comprueba si el usuario tiene fotos
-                        if (user.fotos && Array.isArray(user.fotos)) {
-                            user.fotos.forEach(foto => {
-                                const row = document.createElement('tr');
-                                row.innerHTML = `
-                                    <td>${user.nombre}</td>
-                                    <td>${user.apellido}</td>
-                                    <td>${user.telefono}</td>
-                                    <td>${foto.fotoId}</td>
-                                    <td>${foto.detail}</td>
-                                    <td>${user.digital}</td>
-                                    <td>${user.total}</td>
-                                    <td>
-                                        <button class="edit-btn" data-id="${user.id}">Editar</button>
-                                        <button class="delete-btn" data-id="${user.id}">Eliminar</button>
-                                    </td>
-                                `;
-                                tableBody.appendChild(row);
-                            });
-                        } else {
-                            console.warn('El usuario no tiene fotos:', user);
-                        }
+                        // Crea una fila por cada usuario
+                        const row = document.createElement('tr');
+                        
+                        // Concatena las fotos en un string
+                        const fotos = user.fotos && Array.isArray(user.fotos) 
+                            ? user.fotos.map(foto => `ID: ${foto.fotoId}, Detalle: ${foto.detail}`).join('<br>') 
+                            : 'Sin fotos';
+
+                        row.innerHTML = `
+                            <td>${user.nombre}</td>
+                            <td>${user.apellido}</td>
+                            <td>${user.telefono}</td>
+                            <td>${fotos}</td> <!-- Muestra las fotos aquí -->
+                            <td>${user.digital}</td>
+                            <td>${user.total}</td>
+                            <td>
+                                <button class="edit-btn" data-id="${user.id}">Editar</button>
+                                <button class="delete-btn" data-id="${user.id}">Eliminar</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
                     });
                 } else {
                     console.warn('La respuesta no es un array:', data);
